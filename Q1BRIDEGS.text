@@ -1,0 +1,111 @@
+
+N = 5  # Number of islands
+M = 6  # Number of bridges
+K = 1  # Number of start-end pairs to check
+
+# Treasures on each island (0-indexed, so we ignore the first 0)
+t = [0, 10, 20, 30, 40, 50]
+
+# Bridges: Each bridge is defined as (island1, island2, travel_time)
+b = [
+    [1, 2, 5],
+    [1, 3, 10],
+    [2, 4, 2],
+    [3, 4, 1],
+    [2, 5, 10],
+    [4, 5, 3]
+]
+
+# Start and end island pairs to consider
+se_pairs = [
+    [1, 5]
+]
+
+
+Step-by-Step Iterations
+Initialization:
+
+Graph (g) is created as an adjacency list:
+g[1] = [(2, 5), (3, 10)]
+g[2] = [(1, 5), (4, 2), (5, 10)]
+g[3] = [(1, 10), (4, 1)]
+g[4] = [(2, 2), (3, 1), (5, 3)]
+g[5] = [(2, 10), (4, 3)]
+Priority Queue (pq) is initialized with (-t[1], 0, 1) → (-10, 0, 1), meaning we start at island 1 with 10 treasures and 0 time.
+Max Treasure (max_t) list is initialized as [-inf, 10, -inf, -inf, -inf, -inf], indicating that we know the treasure at island 1.
+Min Time (min_time) list is initialized as [inf, 0, inf, inf, inf, inf], indicating that we can reach island 1 in 0 time.
+Iteration 1: Pop the priority queue pq.
+
+Current Island: We pop (-10, 0, 1) from the queue.
+curr_t = 10 (treasures collected so far)
+curr_time = 0 (time spent so far)
+island = 1
+Neighbors of Island 1:
+For island 2, travel time is 5. So:
+next_treasure = curr_t + t[2] = 10 + 20 = 30
+next_time = curr_time + 5 = 0 + 5 = 5
+This is better than max_t[2] (which is -inf), so update:
+max_t[2] = 30
+min_time[2] = 5
+Push (-30, 5, 2) to the queue.
+For island 3, travel time is 10. So:
+next_treasure = curr_t + t[3] = 10 + 30 = 40
+next_time = curr_time + 10 = 0 + 10 = 10
+Update:
+max_t[3] = 40
+min_time[3] = 10
+Push (-40, 10, 3) to the queue.
+Iteration 2: Pop the priority queue pq.
+
+Current Island: Pop (-40, 10, 3) from the queue.
+curr_t = 40
+curr_time = 10
+island = 3
+Neighbors of Island 3:
+For island 1, travel time is 10, but island 1 is already visited, so skip it.
+For island 4, travel time is 1. So:
+next_treasure = curr_t + t[4] = 40 + 40 = 80
+next_time = curr_time + 1 = 10 + 1 = 11
+Update:
+max_t[4] = 80
+min_time[4] = 11
+Push (-80, 11, 4) to the queue.
+Iteration 3: Pop the priority queue pq.
+
+Current Island: Pop (-80, 11, 4) from the queue.
+curr_t = 80
+curr_time = 11
+island = 4
+Neighbors of Island 4:
+For island 2, travel time is 2. So:
+next_treasure = curr_t + t[2] = 80 + 20 = 100
+next_time = curr_time + 2 = 11 + 2 = 13
+Update:
+max_t[2] = 100
+min_time[2] = 13
+Push (-100, 13, 2) to the queue.
+For island 3, travel time is 1, but it's already visited, so skip it.
+For island 5, travel time is 3. So:
+next_treasure = curr_t + t[5] = 80 + 50 = 130
+next_time = curr_time + 3 = 11 + 3 = 14
+Update:
+max_t[5] = 130
+min_time[5] = 14
+Push (-130, 14, 5) to the queue.
+Iteration 4: Pop the priority queue pq.
+
+Current Island: Pop (-130, 14, 5) from the queue.
+curr_t = 130
+curr_time = 14
+island = 5
+Since we've reached island 5, we stop and return:
+max_treasure = 130
+min_time = 14
+Result for this pair:
+For the start-end pair (1, 5), the maximum treasure collected is 130, and the minimum travel time to collect that treasure is 14.
+
+General Notes on Iterations:
+The algorithm uses a priority queue (heapq) to always process the path that collects the maximum treasure while considering paths with shorter travel times.
+Once an island is visited, it's marked as visited to avoid reprocessing.
+For each neighboring island, the algorithm calculates the total treasure and travel time. If it's better than what was found previously (i.e., higher treasure or same treasure with less time), it updates and pushes the new state into the priority queue.
+Each start-end pair repeats this process.
